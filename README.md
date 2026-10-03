@@ -101,6 +101,9 @@ Both lists are read live, so nothing here goes stale:
   look together.
 - Pictures are not stored anywhere. Reloading the tab starts a new world; a walk
   link is the only way to keep one.
+- The shared endpoint behind the preview answers `500` now and then when it is
+  busy. The app says so and leaves the world where it was, so the next click
+  carries on.
 - Replay is faithful but not bit-identical across model versions: the same
   prompt and seed on a different model release can come back slightly different.
 - Each click is two or three billable calls (picture, spotter, sometimes the
@@ -108,12 +111,18 @@ Both lists are read live, so nothing here goes stale:
 
 ## Verified
 
+![The free preview after one step in: two views in the filmstrip, three spots on the picture](screenshot.png)
+
+- The free preview was walked end to end in a real browser (Chromium,
+  2026-10-03): scene typed, first postcard painted, three spots placed, one spot
+  clicked, second postcard painted from the first as its reference, filmstrip at
+  two views. That is the screenshot above.
 - `image.pollinations.ai` free path, `gen.pollinations.ai` image/models/text
   endpoints, the chat endpoint and the OAuth token endpoint all send
   `access-control-allow-origin: *`, so a static page can call them from the
   browser (checked 2026-10-03).
-- The free preview was walked end to end in a real browser: two views, spots
-  found, filmstrip and walk link working.
+- `POST /api/oauth/token` without a `client_id` answers `invalid_request`, which
+  is why the page always sends one (see below).
 - `GET /text/models` entries carry `input_modalities`, which is what the spotter
   list is filtered on; `GET /image/models` entries do not carry
   `max_reference_images`, which is why reference images are passed by URL rather
