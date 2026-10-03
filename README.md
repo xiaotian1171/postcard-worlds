@@ -59,6 +59,12 @@ python3 -m http.server 8080
 
 Deployed with GitHub Pages from the repository root.
 
+The parsing and replay logic has tests, no browser needed:
+
+```bash
+node test.mjs
+```
+
 ## Sign-in details
 
 - PKCE authorization-code flow against `enter.pollinations.ai`, `redirect_uri`
