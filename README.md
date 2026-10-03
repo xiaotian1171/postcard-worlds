@@ -14,13 +14,15 @@ Live: https://xiaotian1171.github.io/postcard-worlds/
 | | free preview | signed in (bring your own Pollen) |
 |---|---|---|
 | sign-in | none | Pollinations OAuth, or paste an `sk_` key |
+| how far you get | three views, then it asks you to sign in | as far as you like |
 | pictures | shared legacy image endpoint | `gen.pollinations.ai`, the picture model you pick |
 | ways onwards | an anonymous text model suggests three exits | a vision model **reads the picture** and picks three spots that are really in it |
 | billing | shared | your own Pollen, balance on screen |
 
-The preview exists so a visitor can see the whole loop before deciding to connect
-a wallet; the signed-in path is the real one. The app says which mode it is in,
-in the top bar and above the fold.
+The preview exists so a visitor can see the loop before connecting a wallet, and
+it is capped at three views so it does not lean on shared capacity. The
+signed-in path is the real one, and the app says which mode it is in, in the top
+bar and above the fold.
 
 ## How a walk works
 

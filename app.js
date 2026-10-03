@@ -19,6 +19,7 @@ const WIDTH = 1024;
 const HEIGHT = 768;
 const GRID = 3;
 const CELLS = GRID * GRID;
+const FREE_VIEWS = 3;
 
 const SS = { token: "pw.token", verifier: "pw.verifier", state: "pw.state" };
 const PREF = "pw.prefs";
@@ -363,6 +364,12 @@ async function startWorld(scene) {
 
 async function stepInto(exit) {
     if (state.busy) return;
+    if (state.mode === "free" && state.steps.length >= FREE_VIEWS) {
+        toast(`The free preview stops after ${FREE_VIEWS} views. Sign in and the next step is yours to take — on your own Pollen.`);
+        el.signinBox.open = true;
+        el.signinBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
     const previous = current();
     if (!previous) return;
     state.busy = true;
@@ -490,7 +497,7 @@ function signOut() {
     el.signin.classList.remove("hidden");
     el.signout.classList.add("hidden");
     el.wallet.classList.add("hidden");
-    el.startNote.textContent = "Free preview: the shared legacy endpoint and generic ways onwards. Sign in for model choice, vision-found spots and your own wallet.";
+    el.startNote.textContent = "Free preview: three views on the shared endpoint. Sign in to keep walking, choose models, and let a vision model find the spots — on your own Pollen.";
     syncMode();
 }
 
@@ -811,7 +818,7 @@ function init() {
     el.style.value = state.styleId;
     el.keepLook.checked = state.keepLook;
     el.mode.textContent = "free preview";
-    el.startNote.textContent = "Free preview: the shared legacy endpoint and generic ways onwards. Sign in for model choice, vision-found spots and your own wallet.";
+    el.startNote.textContent = "Free preview: three views on the shared endpoint. Sign in to keep walking, choose models, and let a vision model find the spots — on your own Pollen.";
 
     wire();
 
