@@ -46,11 +46,30 @@ const SURPRISES = [
 ];
 
 // Used when nothing else can propose ways onwards, so the walk never dead-ends.
-const TEMPLATE_EXITS = [
-    { cell: 2, label: "Through the doorway", next: "the same place seen from just inside, through the open doorway" },
-    { cell: 5, label: "Onwards along the path", next: "the same place a little further on, following the path away" },
-    { cell: 8, label: "Out of the window", next: "the same place seen from a window above, looking out over it" },
+// The preview has no key to spend, so its exits come from three generic
+// templates. Nothing in the preview calls the network for them: it stays
+// instant and costs nobody anything.
+const TEMPLATE_SETS = [
+    [
+        { cell: 2, label: "Through the doorway", next: "the same place seen from just inside, through the open doorway" },
+        { cell: 5, label: "Onwards along the path", next: "the same place a little further on, following the path away" },
+        { cell: 8, label: "Out of the window", next: "the same place seen from a window above, looking out over it" },
+    ],
+    [
+        { cell: 1, label: "Down the stair", next: "the same place from the bottom of the stair, looking back up" },
+        { cell: 6, label: "Past the gate", next: "the same place from beyond the gate, seen from the other side" },
+        { cell: 9, label: "Over the bridge", next: "the same place from the middle of the bridge, water below" },
+    ],
+    [
+        { cell: 3, label: "Round the corner", next: "the same place from around the corner, half hidden" },
+        { cell: 4, label: "Under the arch", next: "the same place from under the arch, looking through it" },
+        { cell: 7, label: "Up the hill", next: "the same place seen from higher up the hill, looking down" },
+    ],
 ];
+
+function templateExits() {
+    return TEMPLATE_SETS[Math.floor(Math.random() * TEMPLATE_SETS.length)].map((exit) => ({ ...exit }));
+}
 
 const SPOT_VISION = `You are the spotter for a picture explorer. Look at the picture and choose exactly three places the player could click to step further into the same world: a door, a path, a window, a stair, a gate, a bridge — whatever is really in this picture.
 
@@ -58,15 +77,6 @@ Answer with JSON only, no prose, no code fences:
 {"exits":[{"cell":<1-9>,"label":"<2-4 words>","next":"<8-16 word description of the next picture, same world, one step further>"}]}
 
 cell is the position of that spot in the picture on a 3x3 grid: 1 top-left, 2 top-centre, 3 top-right, 4 middle-left, 5 centre, 6 middle-right, 7 bottom-left, 8 bottom-centre, 9 bottom-right. Use three different cells. The label is what the player clicks, the next is what gets painted.`;
-
-const SPOT_TEXT = `Someone is exploring a world one picture at a time. The picture they are looking at right now: "{view}".
-
-Suggest exactly three ways onwards, each a different kind of place that fits this world (a door, a path, a window, a stair, a gate...).
-
-Answer with JSON only, no prose, no code fences:
-{"exits":[{"cell":<1-9>,"label":"<2-4 words>","next":"<8-16 word description of the next picture, same world, one step further>"}]}
-
-cell is where the player clicks, on a 3x3 grid over the picture: 1 top-left ... 9 bottom-right. Use three different cells.`;
 
 const el = {};
 const state = {
@@ -272,10 +282,8 @@ function parseExits(text) {
 }
 
 async function findExits(step) {
+    if (state.mode === "free") return templateExits();
     try {
-        if (state.mode === "free") {
-            return parseExits(await chat("openai", SPOT_TEXT.replace("{view}", step.prompt)));
-        }
         const dataUrl = await blobToDataUrl(step.blob);
         const content = [
             { type: "text", text: SPOT_VISION },
@@ -283,7 +291,7 @@ async function findExits(step) {
         ];
         return parseExits(await chat(state.visionModel || "openai", content));
     } catch {
-        return TEMPLATE_EXITS.map((exit) => ({ ...exit }));
+        return templateExits();
     }
 }
 

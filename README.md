@@ -16,7 +16,7 @@ Live: https://xiaotian1171.github.io/postcard-worlds/
 | sign-in | none | Pollinations OAuth, or paste an `sk_` key |
 | how far you get | three views, then it asks you to sign in | as far as you like |
 | pictures | shared legacy image endpoint | `gen.pollinations.ai`, the picture model you pick |
-| ways onwards | an anonymous text model suggests three exits | a vision model **reads the picture** and picks three spots that are really in it |
+| ways onwards | three exits from a generic set of templates | a vision model **reads the picture** and picks three spots that are really in it |
 | billing | shared | your own Pollen, balance on screen |
 
 The preview exists so a visitor can see the loop before connecting a wallet, and
@@ -32,7 +32,9 @@ bar and above the fold.
 2. The picture is painted, then the spotter is asked for exactly three exits as
    JSON: a label to click, the next scene description, and a cell on a 3x3 grid
    over the picture.
-3. **Cells, not pixels.** Asking a vision model for bounding boxes gives
+3. In the preview the exits come from templates, so they cost nothing and
+   appear instantly; signed in, the spotter reads the picture. Then: **cells,
+   not pixels.** Asking a vision model for bounding boxes gives
    coordinates that land next to the door. Asking it which ninth of the picture
    the door is in is something it gets right, and the button lands in that ninth.
    Spot labels are clamped, duplicates are dropped, and fewer than two exits
@@ -89,6 +91,8 @@ Both lists are read live, so nothing here goes stale:
   no registered App Key can only offer the redirect hostname. If the server
   refuses that, the app says so and the pasted `sk_` key path still works — the
   free preview is unaffected.
+- The preview's exits are generic: they are picked from three templates and
+  cannot know what is really in the picture. That is what signing in buys.
 - The reference image is passed as a URL, so it only works when the previous
   picture has a public one. In the free preview it always does (the legacy
   endpoint is a plain GET URL). Signed in, the previous picture is a blob, so
