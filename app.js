@@ -382,6 +382,10 @@ async function stepInto(exit) {
     if (!previous) return;
     state.busy = true;
     setLoading("Walking onwards…");
+    // Stepping in from a view you walked back to starts a new branch: the
+    // views after it are dropped, so the filmstrip and a walk link always
+    // follow the path that was actually taken.
+    state.steps = state.steps.slice(0, state.index + 1);
     try {
         // While replaying a recorded walk the prompt and seed come from the
         // recording, so the same pictures come back.
