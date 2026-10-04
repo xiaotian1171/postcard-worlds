@@ -24,6 +24,7 @@ const FREE_VIEWS = 3;
 const SS = { token: "pw.token", verifier: "pw.verifier", state: "pw.state" };
 const PREF = "pw.prefs";
 const APPKEY = "pw.appkey";
+const DEFAULT_APPKEY = "pk_Q4DvwRonxAhGwFCM";
 
 const STYLES = [
     { id: "postcard", name: "Vintage postcard", phrase: "vintage travel postcard, linen texture, muted faded colours, printed ink edge" },
@@ -525,7 +526,7 @@ async function startAuth() {
     const params = new URLSearchParams({
         response_type: "code",
         redirect_uri: APP_URL,
-        client_id: appkey || location.hostname,
+        client_id: appkey || DEFAULT_APPKEY,
         scope: "profile usage",
         state: nonce,
         code_challenge: await s256(verifier),
@@ -549,7 +550,7 @@ async function finishAuth(code, returnedState) {
         code,
         redirect_uri: APP_URL,
         code_verifier: verifier,
-        client_id: appkey || location.hostname,
+        client_id: appkey || DEFAULT_APPKEY,
     });
     const response = await fetch(`${ENTER}/api/oauth/token`, {
         method: "POST",
@@ -714,7 +715,7 @@ function loadPrefs() {
     if (typeof prefs.imageModel === "string") state.imageModel = prefs.imageModel;
     if (typeof prefs.visionModel === "string" && prefs.visionModel) state.visionModel = prefs.visionModel;
     if (typeof prefs.keepLook === "boolean") state.keepLook = prefs.keepLook;
-    el.appkey.value = localStorage.getItem(APPKEY) || "";
+    el.appkey.value = localStorage.getItem(APPKEY) || DEFAULT_APPKEY;
 }
 
 /* --------------------------------------------------------------------- start */
